@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="activation_codes")
-public class ActivationCode {
+@Table(name="verification_codes")
+public class VerificationCode {
 
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY) 
@@ -31,7 +31,7 @@ public class ActivationCode {
 	@Column(name="verification_code")
 	private String verificationCode;
 	
-	@Column(name="created_date",columnDefinition = "Date defult CURRENT_DATE")
+	@Column(name="created_date")
 	private LocalDate createdDate=LocalDate.now();
 	
 	@Column(name="expired_date")
@@ -46,7 +46,7 @@ public class ActivationCode {
 	@Column(name="confirmed_date")
 	private LocalDate confirmedDate;
 
-	public ActivationCode(int userId, String verificationCode, LocalDate expiredDate) {
+	public VerificationCode(int userId, String verificationCode, LocalDate expiredDate) {
 		super();
 		this.userId = userId;
 		this.verificationCode = verificationCode;

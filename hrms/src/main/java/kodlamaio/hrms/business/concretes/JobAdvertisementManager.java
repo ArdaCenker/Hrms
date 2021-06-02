@@ -2,6 +2,7 @@ package kodlamaio.hrms.business.concretes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,15 @@ public class JobAdvertisementManager implements JobAdvertisementService{
 	
 	}
 	
+	
+	// teşekkürler yakup :)
+	
 	@Override
 	public DataResult<List<JobAdvertisementDto>> getByIsActive() {
 		return new SuccessDataResult<List<JobAdvertisementDto>>(this.dtoGenerator(this.jobAdvertisementDao.getByIsActive()),"All active advertisement listed !");
 		
 	}
+
 	
 	@Override
 	public DataResult<List<JobAdvertisementDto>> getAllSortedByReleaseDate() {
@@ -56,11 +61,15 @@ public class JobAdvertisementManager implements JobAdvertisementService{
 		
 	}
 	
+
 	@Override
 	public DataResult<List<JobAdvertisementDto>> getAllByEmployerId(int employerId) {
 		
 		return new SuccessDataResult<List<JobAdvertisementDto>>(this.dtoGenerator(this.jobAdvertisementDao.getByEmployer_IdAndIsOpenedTrue(employerId)));
 	}
+	
+	
+
 	
 	@Override
 	public Result update(JobAdvertisement jobAdvertisement) {
@@ -69,16 +78,9 @@ public class JobAdvertisementManager implements JobAdvertisementService{
 		return new SuccessResult("Job Advertisement updated !");
 	}
 	
-	private List<JobAdvertisementDto> dtoGenerator(List<JobAdvertisement> advertisement){
-		List<JobAdvertisementDto> jobAdvertisementDtos= new ArrayList<JobAdvertisementDto>(); 
-		advertisement.forEach(item -> {
-			JobAdvertisementDto dto=modelMapper.map(item, JobAdvertisementDto.class);
-			dto.setCompanyName(item.getEmployer().getCompanyName());
-			jobAdvertisementDtos.add(dto);
-		});
-		return jobAdvertisementDtos;
 	
-	}
+
+	
 
 	@Override
 	public Result toggleActive(int jobId) {
@@ -96,6 +98,7 @@ public class JobAdvertisementManager implements JobAdvertisementService{
 	}
 	
 	
+	
 	private boolean IsJobAdvertisementExists(JobAdvertisement jobAdvertisement) {
 		
 		if(jobAdvertisement == null) {
@@ -103,5 +106,17 @@ public class JobAdvertisementManager implements JobAdvertisementService{
 		}
 		return true;
 	}
+	
+	private List<JobAdvertisementDto> dtoGenerator(List<JobAdvertisement> advertisement){
+		List<JobAdvertisementDto> jobAdvertisementDtos= new ArrayList<JobAdvertisementDto>(); 
+		advertisement.forEach(item -> {
+			JobAdvertisementDto dto=modelMapper.map(item, JobAdvertisementDto.class);
+			dto.setCompanyName(item.getEmployer().getCompanyName());
+			jobAdvertisementDtos.add(dto);
+		});
+		return jobAdvertisementDtos;
+	
+	}
+
 	
 }

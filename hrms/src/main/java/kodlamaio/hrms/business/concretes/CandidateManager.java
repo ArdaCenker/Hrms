@@ -6,27 +6,27 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kodlamaio.hrms.business.abstracts.JobSeekerService;
+import kodlamaio.hrms.business.abstracts.CandidateService;
 import kodlamaio.hrms.core.utilities.adapters.mernis.UserCheckService;
 import kodlamaio.hrms.core.utilities.results.DataResult;
 import kodlamaio.hrms.core.utilities.results.ErrorResult;
 import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.core.utilities.results.SuccessDataResult;
 import kodlamaio.hrms.core.utilities.results.SuccessResult;
-import kodlamaio.hrms.dataAccess.abstracts.JobSeekerDao;
-import kodlamaio.hrms.entities.concretes.JobSeeker;
+import kodlamaio.hrms.dataAccess.abstracts.CandidateDao;
+import kodlamaio.hrms.entities.concretes.Candidate;
 
-@Service("JobSeekerManager")
+@Service("CandidateManager")
 
-public class JobSeekerManager implements JobSeekerService {
+public class CandidateManager implements CandidateService {
 
 	
-	private JobSeekerDao candidateDao;
+	private CandidateDao candidateDao;
 	private UserCheckService userCheckService;
 	
 	
 	@Autowired
-	public JobSeekerManager(JobSeekerDao candidateDao,UserCheckService userCheckService) {
+	public CandidateManager(CandidateDao candidateDao,UserCheckService userCheckService) {
 	
 		super();
 		this.candidateDao=candidateDao;
@@ -35,28 +35,28 @@ public class JobSeekerManager implements JobSeekerService {
 	}
 
 	@Override
-	public DataResult<JobSeeker> getByNationalId(String nationalId) {
+	public DataResult<Candidate> getByNationalId(String nationalId) {
 		
-		return new SuccessDataResult<JobSeeker>(this.candidateDao.findByNationalityId(nationalId));
+		return new SuccessDataResult<Candidate>(this.candidateDao.findByNationalityId(nationalId));
 	}
 
 	@Override
-	public DataResult<JobSeeker> getByEmail(String email) {
+	public DataResult<Candidate> getByEmail(String email) {
 	
-		return new SuccessDataResult<JobSeeker>(this.candidateDao.findByEmail(email));
+		return new SuccessDataResult<Candidate>(this.candidateDao.findByEmail(email));
 	}
 
 
 
 	@Override
-	public DataResult<List<JobSeeker>> getAll() {
+	public DataResult<List<Candidate>> getAll() {
 	
-		return new SuccessDataResult<List<JobSeeker>>(this.candidateDao.findAll());
+		return new SuccessDataResult<List<Candidate>>(this.candidateDao.findAll());
 	}
 	
 	
 	@Override
-	public Result add(JobSeeker candidate) {
+	public Result add(Candidate candidate) {
 		
 		if(!validationForJobSeeker(candidate)) {
 			return new ErrorResult("Missing information...");
@@ -68,7 +68,7 @@ public class JobSeekerManager implements JobSeekerService {
 		if(!checkIfEmailExists(candidate.getEmail())) {
 			return new ErrorResult("Email already exist...");
 		}
-		if(!checkIfNationalityId(candidate.getIdentityNumber())) {
+		if(!checkIfNationalityId(candidate.getNationalityId())) {
 			return new ErrorResult("Nationality already exist...");
 		}
 		
@@ -77,7 +77,6 @@ public class JobSeekerManager implements JobSeekerService {
 	}
 	
 	
-	// business rules
 	private boolean checkIfEmailExists(String email) {
 		if(this.candidateDao.findByEmail(email) !=null) {
 			return false;
@@ -93,9 +92,9 @@ public class JobSeekerManager implements JobSeekerService {
 		return true;
 	}
 	
-	private boolean checkIfRealPerson(JobSeeker candidate) {
-		   if(!this.userCheckService.checkIfRealPerson(Long.parseLong(candidate.getIdentityNumber()), candidate.getFirstName().toUpperCase(new Locale("tr")), candidate.getLastName().toLowerCase(new Locale("tr")),
-				   candidate.getBirthDate())) {
+	private boolean checkIfRealPerson(Candidate candidate) {
+		   if(!this.userCheckService.checkIfRealPerson(Long.parseLong(candidate.getNationalityId()), candidate.getFirstName().toUpperCase(new Locale("tr")), candidate.getLastName().toLowerCase(new Locale("tr")),
+				   candidate.getDateOfBirth())) {
 			   
 			   return false;
 		   }
@@ -104,10 +103,10 @@ public class JobSeekerManager implements JobSeekerService {
 		}
 		
 
-	private boolean validationForJobSeeker(JobSeeker candidate) {
+	private boolean validationForJobSeeker(Candidate candidate) {
 		
-		if(candidate.getFirstName() == null && candidate.getLastName() == null && candidate.getIdentityNumber() == null
-				&& candidate.getBirthDate() == null && candidate.getEmail() == null) {
+		if(candidate.getFirstName() == null && candidate.getLastName() == null && candidate.getNationalityId() == null
+				&& candidate.getDateOfBirth() == null && candidate.getEmail() == null) {
 			return false;
 					
 		}

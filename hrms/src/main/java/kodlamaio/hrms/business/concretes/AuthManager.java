@@ -5,28 +5,28 @@ import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import kodlamaio.hrms.business.abstracts.ActivationCodeService;
 import kodlamaio.hrms.business.abstracts.AuthService;
+import kodlamaio.hrms.business.abstracts.CandidateService;
 import kodlamaio.hrms.business.abstracts.EmployerService;
-import kodlamaio.hrms.business.abstracts.JobSeekerService;
+import kodlamaio.hrms.business.abstracts.VerificationCodeService;
 import kodlamaio.hrms.core.utilities.results.ErrorResult;
 import kodlamaio.hrms.core.utilities.results.Result;
 import kodlamaio.hrms.core.utilities.results.SuccessResult;
 import kodlamaio.hrms.core.utilities.verification.VerificationService;
-import kodlamaio.hrms.entities.concretes.ActivationCode;
+import kodlamaio.hrms.entities.concretes.Candidate;
 import kodlamaio.hrms.entities.concretes.Employer;
-import kodlamaio.hrms.entities.concretes.JobSeeker;
+import kodlamaio.hrms.entities.concretes.VerificationCode;
 
 @Service("AuthManager")
 public class AuthManager implements AuthService {
 
-	private JobSeekerService candidateService;
+	private CandidateService candidateService;
 	private EmployerService employerService;
-	private ActivationCodeService codeService;
+	private VerificationCodeService codeService;
 	private VerificationService verificationService;
 
 	@Autowired
-	public AuthManager(JobSeekerService candidateService, EmployerService employerService, ActivationCodeService codeService, VerificationService verificationService) {
+	public AuthManager(CandidateService candidateService, EmployerService employerService, VerificationCodeService codeService, VerificationService verificationService) {
 
 		this.candidateService = candidateService;
 
@@ -53,7 +53,7 @@ public class AuthManager implements AuthService {
         	String code = this.verificationService.codeGenerator();
  			this.verificationService.sendVerificationCode(code);
  			
- 			ActivationCode act_code = new ActivationCode(employer.getId(),code,LocalDate.now().plusDays(1));
+ 			VerificationCode act_code = new VerificationCode(employer.getId(),code,LocalDate.now().plusDays(1));
  			this.codeService.add(act_code);
         	 
 		   return new SuccessResult("Employer Registered !");
@@ -64,7 +64,7 @@ public class AuthManager implements AuthService {
 	}
 
 	@Override
-	public Result registerCandidate(JobSeeker candidate, String confirmedPassword) {
+	public Result registerCandidate(Candidate candidate, String confirmedPassword) {
 
 		if(!checkIfEqualPasswordAndConfirmPassword(candidate.getPassword(),confirmedPassword)) {
 			
@@ -78,7 +78,7 @@ public class AuthManager implements AuthService {
 			String code = this.verificationService.codeGenerator();
 			this.verificationService.sendVerificationCode(code);
 			
-			ActivationCode act_code = new ActivationCode(candidate.getId(),code,LocalDate.now().plusDays(1));
+			VerificationCode act_code = new VerificationCode(candidate.getId(),code,LocalDate.now().plusDays(1));
 			this.codeService.add(act_code);
 			
 			return new SuccessResult("Candidate Registered !");
@@ -88,7 +88,6 @@ public class AuthManager implements AuthService {
 		
 	}
 	
-	// confirmed password
 	
 	private boolean checkIfEqualPasswordAndConfirmPassword(String password, String confirmPassword) {
 
@@ -118,11 +117,8 @@ public class AuthManager implements AuthService {
 	 
 	    	return new ErrorResult("Verification Code is Expired");
 	    }
-	   
-	    // TODO: abla intihar etmeden önce  --- aha umut gör :P 
-	  
 	    
-	    ActivationCode verificationCode = result.getData();
+	    VerificationCode verificationCode = result.getData();
 	    
 	    verificationCode.setConfirmedDate(LocalDate.now());
 	    verificationCode.setIsActivate(true);

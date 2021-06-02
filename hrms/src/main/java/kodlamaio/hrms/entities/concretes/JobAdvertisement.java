@@ -67,12 +67,9 @@ public class JobAdvertisement {
 	@Column(name="is_opened",columnDefinition = "boolean default true")
 	private Boolean isOpened=true;
 	
-	// relational properties
-	
 	@ManyToOne()
 	@JoinColumn(name="employer_id")
 	private Employer employer;
-	
 	
 	@ManyToOne()
 	@JoinColumn(name="city_id")
@@ -80,6 +77,6 @@ public class JobAdvertisement {
 	
 	@ManyToOne()
 	@JoinColumn(name="job_id")
-	private Job job;
+	private JobTitle job;
 	
 }
